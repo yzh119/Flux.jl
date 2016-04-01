@@ -1,5 +1,5 @@
 module Flux
 
-# package code goes here
+# Zero Flux Given
 
 end # module
