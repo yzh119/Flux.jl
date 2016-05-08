@@ -1,12 +1,9 @@
 # Flux
 
-Flux is an experimental machine perception / ANN library for Julia.
+Flux is an experimental machine perception / ANN library for Julia. It's most similar in philosophy to the excellent [Keras](http://keras.io). Like that and other high-level ANN libraries, Flux is designed to make experimenting with novel layer types and architectures really fast.
 
-Under the hood, Flux is heavily based on [Torch's](http://torch.ch) elegant model – "modules" are simple Julia objects that conform to an interface for doing efficient forward and backward passes. The Julia advantage is that it allows you to write very efficient kernels without having to "drop down" to unwieldy Cxx interop.
+Flux has a few key differences from other libraries:
 
-The more interesting part is that we also heavily integrate with the [Flow.jl](https://github.com/MikeInnes/Flow.jl) dataflow language. Because it's easy for us to optimise these graph-based programs, we can write the functionality for new modules in a way that's close to the mathematical form while still being very flexible and efficient.
-
-In future we'd also like to take advantage of the graph model for things like more runtime optimisations (e.g. making small-matrix operations really fast), parallelism, and output to other runtimes like TensorFlow.
-
-Flux can therefore accelerate the research stage of testing new architectures and ideas,
-as well as the process of getting those models into production.
+* Flux's [graph-based DSL](https://github.com/MikeInnes/Flow.jl), which provides optimisations and automatic differentiation (in the spirit of Theano), is very tightly integrated with the language. This means nice syntax for your equations (`σ(W*x+b)` anyone?) and no unwieldy `compile` steps.
+* The graph DSL directly represents models, as opposed to computations, so custom architectures – and in particular, recurrent architectures – are expressed very naturally.
+* Flux is written in [Julia](http://julialang.org), which means there's no "dropping down" to C – it's Julia all the way down, and you can prototype both high-level architectures and high-performance GPU kernels from the same language.
