@@ -3,7 +3,7 @@
 @flux type Simple
   weight
   bias
-  feed(x) = σ( weight*x + bias )
+  x -> σ( weight*x + bias )
 end
 
 Simple(nx::Integer, ny::Integer; init = randn) =
@@ -41,7 +41,7 @@ Recurrent(nx, ny, nh; init = randn) =
   delay::Delay
   layer::T
 
-  function feed(x)
+  function (x)
     y, hidden = layer(x, delay(hidden))
     return y
   end
