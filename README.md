@@ -1,6 +1,6 @@
 # Flux
 
-Flux is an experimental machine perception / ANN library for Julia. It's most similar in philosophy to the excellent [Keras](http://keras.io). Like that and other high-level ANN libraries, Flux is designed to make experimenting with novel layer types and architectures really fast.
+Flux is an experimental machine perception / ANN library for Julia. It's most similar in philosophy to the excellent [Keras](http://keras.io). Like that and other high-level ANN libraries, Flux is designed to make experimenting with novel layer types and architectures really fast, without sacrificing speed.
 
 Flux has a few key differences from other libraries:
 
