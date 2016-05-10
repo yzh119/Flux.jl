@@ -7,9 +7,7 @@ const test = data[50_001:60_000]
 
 const m = Sequence(
   Input(784),
-  Dense(30),
-  Sigmoid(),
-  Dense(10),
-  Sigmoid())
+  Dense(30), Sigmoid(),
+  Dense(10), Sigmoid())
 
-Flux.train!(m, epoch = 30)
+@time Flux.train!(m, train, test, epoch = 30)
