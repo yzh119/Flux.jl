@@ -1,10 +1,23 @@
 module Flux
 
+using Lazy, Flow
+
 # Zero Flux Given
 
-abstract Capacitor
+export Model, back!, update!
 
-macro flux(x)
-end
+abstract Model
+abstract Capacitor <: Model
+abstract Activation <: Model
+
+back!(m::Model, ∇) = error("Backprop not implemented for $(typeof(m))")
+update!(m::Model, η) = m
+
+include("utils.jl")
+include("cost.jl")
+include("activation.jl")
+include("layers/input.jl")
+include("layers/dense.jl")
+include("layers/sequence.jl")
 
 end # module
