@@ -2,7 +2,7 @@
 
 ## What?
 
-Flux is an experimental machine perception / ANN library for Julia. It's designed to make experimenting with novel layer types and architectures really fast, without sacrificing speed.
+Flux is an experimental machine perception / ANN library for Julia. It's designed to make experimenting with novel layer types and architectures really fast, without sacrificing runtime speed.
 
 ## Why?
 
@@ -17,6 +17,10 @@ Future work will also include:
 
 * Integration with other backends, so that models can be described using Flux and run using (say) TensorFlow.
 * Carrying out runtime optimisations of the graph, in particular to handle small matrices efficiently.
+
+## How?
+
+See [the design docs](design.md).
 
 ## Is it any good?
 
