@@ -3,6 +3,8 @@ export Sigmoid
 σ(x) = 1/(1+exp(-x))
 σ′(x) = σ(x)*(1-σ(x))
 
+∇₁(::typeof(σ)) = σ′
+
 type Sigmoid <: Activation
   in::Vector{Float32}
   out::Vector{Float32}
