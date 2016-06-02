@@ -24,10 +24,7 @@ function ∇graph(v::IVertex, ∇, out = d())
 end
 
 macro derive(ex)
-  v = vertex(Flow.Do())
-  for (k, x) in ∇graph(il(graphm(resolve_calls(ex))), @flow(∇))
-    k = Symbol("∇", k)
-    thread!(v, @v(Flow.Assign(k)(x)))
-  end
+  ∇s = ∇graph(il(graphm(resolve_calls(ex))), @flow(∇))
+  v = vertex(Flow.Do(), (@v(Flow.Assign(Symbol("∇", k))(v)) for (k, v) in ∇s)...)
   Expr(:quote, @> v cse syntax prettify)
 end
