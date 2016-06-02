@@ -13,7 +13,7 @@ vertex(a...) = IVertex{Any}(a...)
 function ∇graph(v::IVertex, ∇, out = d())
   if isconstant(v)
     @assert !haskey(out, value(v))
-    out[value(v)] = ∇
+    out[value(v)] = il(∇)
   else
     ∇′s = ∇graph(value(v), ∇, inputs(v)...)
     for (v′, ∇′) in zip(inputs(v), ∇′s)
