@@ -47,6 +47,7 @@ function build_backward(∇s, x, params, temps)
   back = IVertex{Any}(Flow.Do())
   tempify(v) = prewalk(v -> haskey(temps, v) ? @v(:(self.$(temps[v]))) : v, v)
   for param in params
+    haskey(∇s, :(self.$param)) || continue
     k = symbol("∇", param)
     ksym = Expr(:quote, k)
     ex = tempify(∇s[:(self.$param)])
@@ -67,7 +68,8 @@ end
 
 function process_type(ex)
   @capture(ex, type T_ fs__ end)
-  @destruct [params = true, funcs = false] = groupby(x->isa(x, Symbol), fs)
+  @destruct [params = true || [],
+             funcs  = false || []] = groupby(x->isa(x, Symbol), fs)
   @assert length(funcs) == 1
   args, body, ∇s = process_func(funcs[1], params)
   @assert length(args) == 1
