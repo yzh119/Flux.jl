@@ -4,7 +4,7 @@ vertex(a...) = IVertex{Any}(a...)
 
 ∇graph(f, ∇, a) = (@v(∇ .* ∇₁(f)(a)),)
 
-∇graph(::typeof(+), ∇, a, b) = ∇, ∇
+∇graph(::typeof(+), ∇, a...) = (∇ for _ in a)
 
 ∇graph(::typeof(-), ∇, a, b) = ∇, @v(-∇)
 
