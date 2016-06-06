@@ -1,22 +1,14 @@
 function forward_temporaries(body, ∇s)
   exs = union((common(body, ∇) for ∇ in values(∇s))...)
-  filter!(ex -> !@capture(value(ex), self._), exs)
+  filter!(ex -> !(@capture(value(ex), self._) || isconstant(ex)), exs)
   [ex=>symbol("temp", i) for (i, ex) in enumerate(exs)]
-end
-
-resolve_calls(ex) = ex
-
-function resolve_calls(ex::Expr)
-  @capture(ex, f_(a__)) ?
-    Expr(:call, eval(current_module(), f), map(resolve_calls, a)...) :
-    Expr(ex.head, map(resolve_calls, ex.args))
 end
 
 function process_func(ex, params)
   @capture(shortdef(ex), (args__,) -> body_)
-  body = il(graphm(resolve_calls(body)))
+  body = il(graphm(body))
   body = map(x -> x in params ? :(self.$x) : x, body)
-  ∇ = ∇graph(body, @flow(∇))
+  ∇ = invert(body, @flow(∇))
   return args, body, ∇
 end
 
@@ -74,11 +66,10 @@ function process_type(ex)
   args, body, ∇s = process_func(funcs[1], params)
   @assert length(args) == 1
   temps = forward_temporaries(body, ∇s)
-  ∇s
   quote
     $(build_type(T, params, collect(values(temps))))
     (self::$T)($(args...),) = $(syntax(build_forward(body, temps)))
-    back!(self::$T, ∇) = $(syntax(build_backward(∇s, args[1], params, temps)))
+    back!(self::$T, ∇, $(args...)) = $(syntax(build_backward(∇s, args[1], params, temps)))
     $(build_update(T, params))
   end |> longdef |> MacroTools.flatten
 end
