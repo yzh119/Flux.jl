@@ -1,7 +1,8 @@
-function forward_temporaries(body, ∇s)
-  exs = union((common(body, ∇) for ∇ in values(∇s))...)
-  filter!(ex -> !(@capture(value(ex), self._) || isconstant(ex)), exs)
-  [ex=>symbol("temp", i) for (i, ex) in enumerate(exs)]
+function forward_temporaries(body, Δs)
+  # exs = union((common(body, Δ) for Δ in values(Δs))...)
+  # filter!(ex -> !(@capture(value(ex), self._) || isconstant(ex)), exs)
+  # [ex=>symbol("temp", i) for (i, ex) in enumerate(exs)]
+  return Dict()
 end
 
 function process_func(ex, params)
