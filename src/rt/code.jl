@@ -46,7 +46,7 @@ function build_backward(Δs, x, params, temps)
     ex = tempify(Δs[:(self.$param)])
     thread!(back, @v(setfield!(:self, ksym, :(self.$k) + ex)))
   end
-  thread!(back, tempify(Δs[x]))
+  thread!(back, @flow(tuple($(tempify(Δs[x])))))
   cse(back)
 end
 
