@@ -73,7 +73,7 @@ function process_type(ex)
     (self::$T)($(args...),) = $(syntax(build_forward(body, temps)))
     back!(self::$T, Δ, $(args...)) = $(syntax(build_backward(Δs, args[1], params, temps)))
     $(build_update(T, params))
-  end |> longdef |> MacroTools.flatten
+  end |> longdef
 end
 
 # process_type(:(type Sigmoid
