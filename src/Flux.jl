@@ -14,6 +14,7 @@ back!(m::Model, ∇) = error("Backprop not implemented for $(typeof(m))")
 update!(m::Model, η) = m
 
 include("compiler/diff.jl")
+include("compiler/loop.jl")
 include("compiler/code.jl")
 
 include("cost.jl")

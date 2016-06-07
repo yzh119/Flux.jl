@@ -27,6 +27,7 @@ function build_type(T, params, temps)
 end
 
 function build_forward(body, temps)
+  body = cut_forward(body)
   forward = IVertex{Any}(Flow.Do())
   for (ex, k) in temps
     k = Expr(:quote, k)
@@ -75,8 +76,19 @@ function process_type(ex)
   end |> longdef |> MacroTools.flatten
 end
 
-process_type(:(type Sigmoid
-  W
-  b
-  x -> σ(W*x+b)
+# process_type(:(type Sigmoid
+#   W
+#   b
+#   bp
+#   x -> σ(W*x+b)
+# end)) |> prettify
+
+process_type(:(type Recurrent
+  Wxh; Whh; Bh
+  Why; By
+
+  function (x)
+    hidden = σ( Wxh*x + Whh*Delay(hidden) + Bh )
+    y = σ( Why*hidden + By )
+  end
 end)) |> prettify
