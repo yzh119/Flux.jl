@@ -12,5 +12,3 @@ function cut_forward(v::IVertex)
     il(@flow(pop!(self.delay)))
   end
 end
-
-cut_forward(g)
