@@ -13,8 +13,8 @@ abstract Activation <: Model
 back!(m::Model, ∇) = error("Backprop not implemented for $(typeof(m))")
 update!(m::Model, η) = m
 
-include("rt/diff.jl")
-include("rt/code.jl")
+include("compiler/diff.jl")
+include("compiler/code.jl")
 
 include("cost.jl")
 include("activation.jl")
