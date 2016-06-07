@@ -1,9 +1,14 @@
-function cut_forward(v::IVertex)
-  pushes = []
+function delays(v::IVertex)
+  ds = []
   Flow.prefor(v) do w
     value(w) == :Delay &&
-      push!(pushes, vertex(:push!, vertex(:(self.delay)), w[1]))
+      push!(ds, w)
   end
+  return ds
+end
+
+function cut_forward(v::IVertex)
+  pushes = map(x->vertex(:push!, vertex(:(self.delay)), v[1]), delays(v))
   isempty(pushes) && return v
   @assert length(pushes) == 1
   v = vertex(Flow.Do(), pushes..., v)
