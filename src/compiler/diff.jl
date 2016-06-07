@@ -14,6 +14,7 @@ function ∇v(v::Vertex, Δ)
 end
 
 function invert(v::IVertex, Δ, out = d())
+  @assert !iscyclic(v)
   if isconstant(v)
     @assert !haskey(out, value(v))
     out[value(v)] = il(Δ)
