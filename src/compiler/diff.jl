@@ -2,6 +2,8 @@ import Flow: isconstant, il, dl, cse, prewalk, graphm, syntax, @v
 
 vertex(a...) = IVertex{Any}(a...)
 
+addΔ(a, b) = vertex(:+, a, b)
+
 # Special case a couple of operators to clean up output code
 const symbolic = Dict()
 
@@ -13,7 +15,7 @@ function ∇v(v::Vertex, Δ)
   map(i -> @flow(getindex($Δ, $i)), 1:Flow.nin(v))
 end
 
-function invert(v::IVertex, Δ, out = d())
+function invert(v::IVertex, Δ = vertex(:Δ), out = d())
   @assert !iscyclic(v)
   if isconstant(v)
     @assert !haskey(out, value(v))

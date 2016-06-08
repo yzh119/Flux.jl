@@ -1,53 +1,44 @@
-function forward_temporaries(body, Δs)
-  # exs = union((common(body, Δ) for Δ in values(Δs))...)
-  # filter!(ex -> !(@capture(value(ex), self._) || isconstant(ex)), exs)
-  # [ex=>symbol("temp", i) for (i, ex) in enumerate(exs)]
-  return Dict()
-end
-
 function process_func(ex, params)
   @capture(shortdef(ex), (args__,) -> body_)
   body = il(graphm(body))
   body = map(x -> x in params ? :(self.$x) : x, body)
-  Δ = invert(body, @flow(Δ))
-  return args, body, Δ
+  return args, body
 end
 
-function build_type(T, params, temps)
+function build_type(T, params)
   quote
     type $T
       $(params...)
       $([symbol("Δ", s) for s in params]...)
-      $(temps...)
     end
     $T($(params...)) = $T($(params...),
-                          $((:(zeros($p)) for p in params)...),
-                          $((:nothing for t in temps)...))
+                          $((:(zeros($p)) for p in params)...))
   end
 end
 
-function build_forward(body, temps)
-  body = cut_forward(body)
-  forward = IVertex{Any}(Flow.Do())
-  for (ex, k) in temps
-    k = Expr(:quote, k)
-    thread!(forward, @v(setfield!(:self, k, ex)))
-  end
-  thread!(forward, body)
-  cse(forward)
+function build_forward(body, args)
+  body = cut_forward(body, args)
+  cse(body)
 end
 
-function build_backward(Δs, x, params, temps)
+function build_backward(body, x, params)
+  Δs, Δloops = cut_backward(body, [x])
   back = IVertex{Any}(Flow.Do())
-  tempify(v) = prewalk(v -> haskey(temps, v) ? @v(:(self.$(temps[v]))) : v, v)
   for param in params
     haskey(Δs, :(self.$param)) || continue
     k = symbol("Δ", param)
     ksym = Expr(:quote, k)
-    ex = tempify(Δs[:(self.$param)])
+    ex = Δs[:(self.$param)]
+    for Δloop in Δloops
+      ex = addΔ(ex, get(Δloop, :(self.$param), vertex(0)))
+    end
     thread!(back, @v(setfield!(:self, ksym, :(self.$k) + ex)))
   end
-  thread!(back, @flow(tuple($(tempify(Δs[x])))))
+  ex = Δs[x]
+  for Δloop in Δloops
+    ex = addΔ(ex, get(Δloop, x, vertex(0)))
+  end
+  thread!(back, @flow(tuple($ex)))
   cse(back)
 end
 
@@ -65,13 +56,12 @@ function process_type(ex)
   @destruct [params = true || [],
              funcs  = false || []] = groupby(x->isa(x, Symbol), fs)
   @assert length(funcs) == 1
-  args, body, Δs = process_func(funcs[1], params)
+  args, body = process_func(funcs[1], params)
   @assert length(args) == 1
-  temps = forward_temporaries(body, Δs)
   quote
-    $(build_type(T, params, collect(values(temps))))
-    (self::$T)($(args...),) = $(syntax(build_forward(body, temps)))
-    back!(self::$T, Δ, $(args...)) = $(syntax(build_backward(Δs, args[1], params, temps)))
+    $(build_type(T, params))
+    (self::$T)($(args...),) = $(syntax(build_forward(body, args)))
+    back!(self::$T, Δ, $(args...)) = $(syntax(build_backward(body, args[1], params)))
     $(build_update(T, params))
   end |> longdef
 end
