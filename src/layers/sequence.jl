@@ -1,6 +1,6 @@
 export Sequence
 
-type Sequence <: Capacitor
+type Sequence
   layers::Vector{Model}
 end
 
