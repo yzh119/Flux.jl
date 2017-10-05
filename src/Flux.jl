@@ -5,7 +5,7 @@ module Flux
 # Zero Flux Given
 
 using Juno, Requires
-using Lazy: @forward
+using MacroTools: @forward
 
 export Chain, Dense, RNN, LSTM,
   SGD, params, mapparams
