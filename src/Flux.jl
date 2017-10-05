@@ -19,6 +19,9 @@ using .Tracker
 include("optimise/Optimise.jl")
 using .Optimise
 
+include("graph/Graph.jl")
+using .Graph
+
 include("utils.jl")
 include("onehot.jl")
 include("tree.jl")

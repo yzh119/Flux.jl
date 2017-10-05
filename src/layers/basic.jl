@@ -56,7 +56,7 @@ Dense(in::Integer, out::Integer, σ = identity; init = initn) =
 
 treelike(Dense)
 
-function (a::Dense)(x)
+@net function (a::Dense)(x)
   W, b, σ = a.W, a.b, a.σ
   σ.(W*x .+ b)
 end
