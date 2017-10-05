@@ -1,3 +1,5 @@
+using DataFlow: vertex, inputnode
+
 """
     Chain(layers...)
 
@@ -22,12 +24,14 @@ end
 @forward Chain.layers Base.getindex, Base.first, Base.last, Base.endof, Base.push!
 @forward Chain.layers Base.start, Base.next, Base.done
 
+Base.getindex(c::Chain, i::AbstractArray) = Chain(c.layers[i]...)
+
 children(c::Chain) = c.layers
 mapchildren(f, c::Chain) = Chain(f.(c.layers)...)
 
 (s::Chain)(x) = foldl((x, m) -> m(x), x, s.layers)
 
-Base.getindex(c::Chain, i::AbstractArray) = Chain(c.layers[i]...)
+graph(s::Chain) = foldl((v, m) -> vertex(m, v), inputnode(1), s.layers)
 
 function Base.show(io::IO, c::Chain)
   print(io, "Chain(")

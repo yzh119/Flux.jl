@@ -21,6 +21,7 @@ using .Optimise
 
 include("graph/Graph.jl")
 using .Graph
+import .Graph: graph
 
 include("utils.jl")
 include("onehot.jl")
