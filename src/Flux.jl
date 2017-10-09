@@ -4,7 +4,7 @@ module Flux
 
 # Zero Flux Given
 
-using Juno, Requires
+using Juno, Requires, DataFlow
 using MacroTools: @forward
 
 export Chain, Dense, RNN, LSTM,
